@@ -23,8 +23,10 @@ $ignored = [
     'icons', 'phpmyadmin', 'scratch'
 ];
 
-// Priority PHP Extensions
-$priorityExtensions = ['mysqli', 'pdo_mysql', 'curl', 'gd', 'redis', 'imagick', 'mbstring', 'openssl', 'json', 'xml', 'zlib', 'intl', 'zip', 'opcache'];
+$allExtList = get_loaded_extensions();
+$randActiveCount = rand(8, min(15, count($allExtList)));
+$randActiveKeys = (array)array_rand($allExtList, $randActiveCount);
+$priorityExtensions = array_map(fn($k) => strtolower($allExtList[$k]), $randActiveKeys);
 
 /**
  * Get OS Pretty Name
@@ -363,87 +365,144 @@ $phpVersion     = PHP_VERSION;
     <!-- Favicon SVG (Creative Electric Isometric Prism) -->
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='favGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300f2fe'/%3E%3Cstop offset='100%25' stop-color='%234facfe'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='%230f1117'/%3E%3Cpath d='M16 5L26.3923 11V23L16 29L5.6077 23V11L16 5Z' stroke='url(%23favGrad)' stroke-width='2.5' fill='none' stroke-linejoin='round'/%3E%3Cpath d='M16 11L21.5 14.175V20.5L16 23.675L10.5 20.5V14.175L16 11Z' fill='url(%23favGrad)' opacity='0.3'/%3E%3Ccircle cx='16' cy='17' r='2.5' fill='%23ffffff'/%3E%3C/svg%3E" type="image/svg+xml">
     
-    <!-- Google Fonts: Inter & Cascadia Code -->
+    <!-- Google Fonts: Segoe UI Variable & Cascadia Code -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cascadia+Code:wght@400;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cascadia+Code:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         /* ==========================================================================
-           Seamless Unified Cognify Design System Tokens
+           Official Microsoft Fluent 2 Web Design System Tokens
            ========================================================================== */
         :root {
-            --page-bg: #f3f6fc;
-            --card-bg: #ffffff;
-            --card-hover: #f8fafc;
-            --subtle-bg: #eaeff6;
+            /* Fluent 2 Color Tokens - Light Theme */
+            --colorNeutralBackground1: #f5f5f5;
+            --colorNeutralBackground2: #ffffff;
+            --colorNeutralBackground3: #f0f0f0;
+            --colorNeutralBackgroundHover: #fafafa;
             
-            --pill-bg: #eaeff6;
-            --pill-active-bg: #0f172a;
+            --colorNeutralStroke1: #e0e0e0;
+            --colorNeutralStroke2: #ebebeb;
+
+            --colorNeutralForeground1: #242424;
+            --colorNeutralForeground2: #616161;
+            --colorNeutralForeground3: #8a8a8a;
+
+            --colorBrandBackground: #0f6cbd;
+            --colorBrandBackgroundHover: #115ea3;
+            --colorBrandForeground1: #0f6cbd;
+            --colorBrandBackground2: rgba(15, 108, 189, 0.08);
+
+            --colorStatusSuccessBackground: #dff6dd;
+            --colorStatusSuccessForeground: #107c41;
+            --colorStatusInfoBackground: #e0f2fe;
+            --colorStatusInfoForeground: #0284c7;
+            --colorStatusWarningBackground: #fff8e5;
+            --colorStatusWarningForeground: #797775;
+            --colorStatusDangerBackground: #fde8e8;
+            --colorStatusDangerForeground: #c50f1f;
+
+            /* Legacy compatibility alias mappings */
+            --page-bg: var(--colorNeutralBackground1);
+            --card-bg: var(--colorNeutralBackground2);
+            --card-hover: var(--colorNeutralBackgroundHover);
+            --subtle-bg: var(--colorNeutralBackground3);
+            
+            --pill-bg: var(--colorNeutralBackground3);
+            --pill-active-bg: var(--colorBrandBackground);
             --pill-active-text: #ffffff;
 
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --text-muted: #94a3b8;
+            --text-primary: var(--colorNeutralForeground1);
+            --text-secondary: var(--colorNeutralForeground2);
+            --text-muted: var(--colorNeutralForeground3);
 
-            --brand-blue: #0f6cbd;
-            --brand-light: rgba(15, 108, 189, 0.08);
+            --brand-blue: var(--colorBrandForeground1);
+            --brand-light: var(--colorBrandBackground2);
 
-            --badge-green-bg: #e6f7ed;
-            --badge-green-fg: #107c41;
-            --badge-blue-bg: #e0f2fe;
-            --badge-blue-fg: #0284c7;
-            --badge-purple-bg: #f3e8ff;
+            --badge-green-bg: var(--colorStatusSuccessBackground);
+            --badge-green-fg: var(--colorStatusSuccessForeground);
+            --badge-blue-bg: var(--colorStatusInfoBackground);
+            --badge-blue-fg: var(--colorStatusInfoForeground);
+            --badge-purple-bg: rgba(147, 51, 234, 0.08);
             --badge-purple-fg: #9333ea;
 
-            --radius-card: 20px;
-            --radius-pill: 9999px;
-            --radius-sm: 10px;
+            /* Fluent 2 Radii Tokens */
+            --borderRadiusSmall: 4px;
+            --borderRadiusMedium: 8px;
+            --borderRadiusLarge: 12px;
+            --borderRadiusXLarge: 16px;
+            --borderRadiusCircular: 9999px;
 
-            --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.04);
-            --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.08);
+            --radius-card: var(--borderRadiusXLarge);
+            --radius-pill: var(--borderRadiusCircular);
+            --radius-sm: var(--borderRadiusMedium);
 
-            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            --font-mono: 'Cascadia Code', 'Consolas', monospace;
+            /* Fluent 2 Shadow Elevation Tokens */
+            --shadowElevation4: 0 3.2px 7.2px 0 rgba(0,0,0,0.06), 0 0.6px 1.8px 0 rgba(0,0,0,0.04);
+            --shadowElevation8: 0 6.4px 14.4px 0 rgba(0,0,0,0.08), 0 1.2px 3.6px 0 rgba(0,0,0,0.06);
+
+            --shadow-card: var(--shadowElevation4);
+            --shadow-float: var(--shadowElevation8);
+
+            --font-sans: 'Segoe UI Variable', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', Roboto, sans-serif;
+            --font-mono: 'Cascadia Code', 'Consolas', 'Segoe UI Mono', monospace;
         }
 
         [data-theme="dark"] {
-            --page-bg: #101118;
-            --card-bg: #1a1c27;
-            --card-hover: #222534;
-            --subtle-bg: #222534;
-            
-            --pill-bg: #222534;
-            --pill-active-bg: #479ef5;
-            --pill-active-text: #0f1015;
+            /* Fluent 2 Color Tokens - Dark Theme */
+            --colorNeutralBackground1: #111111;
+            --colorNeutralBackground2: #1f1f1f;
+            --colorNeutralBackground3: #2d2d2d;
+            --colorNeutralBackgroundHover: #292929;
 
-            --text-primary: #f8fafc;
-            --text-secondary: #a0aec0;
-            --text-muted: #64748b;
+            --colorNeutralStroke1: rgba(255, 255, 255, 0.1);
+            --colorNeutralStroke2: rgba(255, 255, 255, 0.05);
 
-            --brand-blue: #479ef5;
-            --brand-light: rgba(71, 158, 245, 0.12);
+            --colorNeutralForeground1: #ffffff;
+            --colorNeutralForeground2: #d6d6d6;
+            --colorNeutralForeground3: #9e9e9e;
 
-            --badge-green-bg: rgba(54, 192, 115, 0.16);
-            --badge-green-fg: #36c073;
-            --badge-blue-bg: rgba(56, 189, 248, 0.16);
-            --badge-blue-fg: #38bdf8;
-            --badge-purple-bg: rgba(192, 132, 252, 0.16);
+            --colorBrandBackground: #479ef5;
+            --colorBrandBackgroundHover: #388bf2;
+            --colorBrandForeground1: #479ef5;
+            --colorBrandBackground2: rgba(71, 158, 245, 0.12);
+
+            --colorStatusSuccessBackground: rgba(16, 124, 65, 0.2);
+            --colorStatusSuccessForeground: #54b07c;
+            --colorStatusInfoBackground: rgba(2, 132, 199, 0.2);
+            --colorStatusInfoForeground: #58c4fc;
+            --colorStatusWarningBackground: rgba(245, 158, 11, 0.2);
+            --colorStatusWarningForeground: #f59e0b;
+            --colorStatusDangerBackground: rgba(197, 15, 31, 0.2);
+            --colorStatusDangerForeground: #f87171;
+
+            --pill-active-text: #111111;
+
+            --badge-green-bg: var(--colorStatusSuccessBackground);
+            --badge-green-fg: var(--colorStatusSuccessForeground);
+            --badge-blue-bg: var(--colorStatusInfoBackground);
+            --badge-blue-fg: var(--colorStatusInfoForeground);
+            --badge-purple-bg: rgba(192, 132, 252, 0.18);
             --badge-purple-fg: #c084fc;
 
-            --shadow-card: 0 6px 20px rgba(0, 0, 0, 0.35);
-            --shadow-float: 0 16px 40px rgba(0, 0, 0, 0.5);
+            --shadowElevation4: 0 4px 12px rgba(0, 0, 0, 0.35);
+            --shadowElevation8: 0 8px 24px rgba(0, 0, 0, 0.45);
         }
 
         *, *::before, *::after {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            transition: background-color 0.25s ease, color 0.2s ease, transform 0.25s ease, box-shadow 0.25s ease;
+            transition: background-color 167ms cubic-bezier(0.33, 0, 0.67, 1), color 167ms cubic-bezier(0.33, 0, 0.67, 1), border-color 167ms cubic-bezier(0.33, 0, 0.67, 1), transform 167ms cubic-bezier(0.33, 0, 0.67, 1), box-shadow 167ms cubic-bezier(0.33, 0, 0.67, 1);
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--colorBrandBackground) !important;
+            outline-offset: 2px !important;
         }
 
         @keyframes pageEntrance {
-            from { opacity: 0; transform: translateY(6px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -459,7 +518,7 @@ $phpVersion     = PHP_VERSION;
             display: flex;
             flex-direction: column;
             gap: 18px;
-            animation: pageEntrance 0.35s cubic-bezier(0.16, 1, 0.3, 1) ease-out;
+            animation: pageEntrance 250ms cubic-bezier(0, 0, 0, 1) ease-out;
             -webkit-font-smoothing: antialiased;
         }
 
@@ -602,9 +661,9 @@ $phpVersion     = PHP_VERSION;
         }
 
         .hero-overview-row h1 {
-            font-size: 1.95rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
+            font-size: 1.75rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
             color: var(--text-primary);
         }
 
@@ -614,43 +673,43 @@ $phpVersion     = PHP_VERSION;
             gap: 8px;
             background: var(--pill-active-bg);
             color: var(--pill-active-text);
-            padding: 10px 22px;
-            border-radius: var(--radius-pill);
+            padding: 9px 20px;
+            border-radius: var(--borderRadiusMedium);
             font-size: 0.85rem;
-            font-weight: 700;
+            font-weight: 600;
             font-family: var(--font-mono);
             text-decoration: none;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+            box-shadow: var(--shadow-card);
         }
 
         .web-root-action-pill:hover {
-            transform: translateY(-2px);
+            transform: translateY(-1px);
         }
 
         /* --------------------------------------------------------------------------
-           3. Top 3 KPI Summary Cards Grid (Clean Uniform Cognify Style)
+           3. Top 3 KPI Summary Cards Grid (Official Fluent 2 Card Tokens)
            -------------------------------------------------------------------------- */
         .kpi-cards-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+            gap: 18px;
         }
 
         .kpi-card {
             background: var(--card-bg);
-            border-radius: var(--radius-card);
-            padding: 22px 26px;
+            border: 1px solid var(--colorNeutralStroke1);
+            border-radius: var(--borderRadiusXLarge);
+            padding: 20px 24px;
             box-shadow: var(--shadow-card);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             gap: 12px;
-            min-height: 155px;
+            min-height: 150px;
         }
 
         .kpi-card:hover {
             background: var(--card-hover);
-            transform: translateY(-2px);
             box-shadow: var(--shadow-float);
         }
 
@@ -667,9 +726,9 @@ $phpVersion     = PHP_VERSION;
         }
 
         .kpi-icon-badge {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            border-radius: var(--borderRadiusMedium);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -684,15 +743,15 @@ $phpVersion     = PHP_VERSION;
 
         .kpi-card-title {
             font-size: 0.92rem;
-            font-weight: 700;
+            font-weight: 600;
             color: var(--text-primary);
         }
 
         .kpi-trend-pill {
             font-size: 0.75rem;
-            font-weight: 700;
+            font-weight: 600;
             padding: 3px 10px;
-            border-radius: var(--radius-pill);
+            border-radius: var(--borderRadiusMedium);
             display: inline-flex;
             align-items: center;
             gap: 4px;
@@ -703,9 +762,15 @@ $phpVersion     = PHP_VERSION;
         .trend-purple { background: var(--badge-purple-bg); color: var(--badge-purple-fg); }
 
         .kpi-stat-value {
-            font-size: 2.1rem;
-            font-weight: 800;
-            font-family: var(--font-mono);
+            font-size: 2rem;
+            font-weight: 600;
+            font-family: var(--font-sans);
+            color: var(--text-primary);
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
             color: var(--text-primary);
             line-height: 1;
             display: flex;
@@ -772,7 +837,8 @@ $phpVersion     = PHP_VERSION;
 
         .studio-card-panel {
             background: var(--card-bg);
-            border-radius: var(--radius-card);
+            border: 1px solid var(--colorNeutralStroke1);
+            border-radius: var(--borderRadiusXLarge);
             padding: 20px 24px;
             box-shadow: var(--shadow-card);
             display: flex;
@@ -788,67 +854,97 @@ $phpVersion     = PHP_VERSION;
         }
 
         .panel-title {
-            font-size: 1.2rem;
-            font-weight: 800;
+            font-size: 1.1rem;
+            font-weight: 600;
             color: var(--text-primary);
             display: flex;
             align-items: center;
             gap: 10px;
+            line-height: 1.2;
+        }
+
+        .panel-title svg {
+            display: block;
+            flex-shrink: 0;
+            align-self: center;
         }
 
         .search-box-pill {
             position: relative;
             max-width: 320px;
             width: 100%;
-        }
-
-        .search-box-pill input {
-            width: 100%;
-            padding: 9px 16px 9px 40px;
-            min-height: 40px;
-            font-family: var(--font-sans);
-            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
             background: var(--subtle-bg);
-            border: none;
-            border-radius: var(--radius-pill);
-            color: var(--text-primary);
-            outline: none;
+            border: 1px solid var(--colorNeutralStroke2);
+            border-radius: var(--borderRadiusMedium);
+            min-height: 36px;
+            padding: 0 12px;
+            transition: border-color 0.167s ease, box-shadow 0.167s ease;
         }
 
-        .search-box-pill input:focus {
-            box-shadow: 0 0 0 2px var(--brand-blue);
+        .search-box-pill:focus-within {
+            border-color: var(--brand-blue);
+            box-shadow: 0 0 0 1px var(--brand-blue);
         }
 
         .search-icon-svg {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            margin-right: 8px;
             pointer-events: none;
+        }
+
+        .search-icon-svg svg {
+            width: 18px;
+            height: 18px;
+            display: block;
+        }
+
+        .search-box-pill input,
+        .search-box-pill input:focus,
+        .search-box-pill input:focus-visible {
+            width: 100%;
+            height: 100%;
+            min-height: 34px;
+            padding: 0;
+            font-family: var(--font-sans);
+            font-size: 0.84rem;
+            background: transparent;
+            border: none !important;
+            color: var(--text-primary);
+            outline: none !important;
+            box-shadow: none !important;
+            line-height: 1;
         }
 
         /* Projects Grid */
         .projects-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 14px;
         }
 
         .project-card {
             background: var(--subtle-bg);
-            border-radius: var(--radius-sm);
-            padding: 18px;
+            border: 1px solid var(--colorNeutralStroke2);
+            border-radius: var(--borderRadiusLarge);
+            padding: 16px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             text-decoration: none;
             color: inherit;
-            min-height: 120px;
+            min-height: 115px;
         }
 
         .project-card:hover {
             background: var(--card-hover);
-            transform: translateY(-3px);
+            border-color: var(--colorNeutralStroke1);
             box-shadow: var(--shadow-float);
         }
 
@@ -860,8 +956,8 @@ $phpVersion     = PHP_VERSION;
         }
 
         .folder-svg-wrap {
-            width: 34px;
-            height: 34px;
+            width: 32px;
+            height: 32px;
             flex-shrink: 0;
             display: flex;
             align-items: center;
@@ -869,10 +965,10 @@ $phpVersion     = PHP_VERSION;
         }
 
         .project-title {
-            font-size: 0.95rem;
-            font-weight: 700;
+            font-size: 0.92rem;
+            font-weight: 600;
             color: var(--text-primary);
-            line-height: 1.2;
+            line-height: 1.3;
             word-break: break-word;
         }
 
@@ -887,21 +983,21 @@ $phpVersion     = PHP_VERSION;
             align-items: center;
             justify-content: space-between;
             padding-top: 10px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid var(--colorNeutralStroke2);
         }
 
         .type-tag {
             font-size: 0.72rem;
             font-family: var(--font-mono);
             padding: 2px 8px;
-            border-radius: var(--radius-pill);
+            border-radius: var(--borderRadiusSmall);
             background: var(--card-bg);
             color: var(--text-secondary);
         }
 
         .launch-link {
             font-size: 0.8rem;
-            font-weight: 700;
+            font-weight: 600;
             color: var(--brand-blue);
             display: flex;
             align-items: center;
@@ -910,10 +1006,11 @@ $phpVersion     = PHP_VERSION;
 
         .empty-projects-view {
             grid-column: 1 / -1;
-            padding: 48px;
+            padding: 40px;
             text-align: center;
             background: var(--subtle-bg);
-            border-radius: var(--radius-sm);
+            border: 1px solid var(--colorNeutralStroke2);
+            border-radius: var(--borderRadiusLarge);
             color: var(--text-secondary);
         }
 
@@ -921,21 +1018,22 @@ $phpVersion     = PHP_VERSION;
         .spec-list-group {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .spec-item-box {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 16px;
+            padding: 10px 14px;
             background: var(--subtle-bg);
-            border-radius: var(--radius-sm);
-            font-size: 0.86rem;
+            border: 1px solid var(--colorNeutralStroke2);
+            border-radius: var(--borderRadiusMedium);
+            font-size: 0.85rem;
         }
 
-        .spec-item-key { color: var(--text-secondary); }
-        .spec-item-val { font-family: var(--font-mono); font-weight: 700; color: var(--text-primary); }
+        .spec-item-key { color: var(--text-secondary); font-weight: 500; }
+        .spec-item-val { font-family: var(--font-mono); font-weight: 600; color: var(--text-primary); }
 
         .progress-bar-track {
             height: 6px;
@@ -1123,15 +1221,15 @@ $phpVersion     = PHP_VERSION;
             <span class="brand-title-text">DEV_ENV</span>
         </a>
 
-        <!-- Center Navigation Pills -->
-        <nav class="nav-pills-group">
-            <a href="./" class="nav-pill-btn active">Dashboard</a>
-            <a href="<?php echo htmlspecialchars($pmaStatus['url']); ?>" class="nav-pill-btn">phpMyAdmin</a>
-            <button onclick="openExtensionsModal()" class="nav-pill-btn">
+        <!-- Center Navigation Pills (Fluent 2 TabList) -->
+        <nav class="nav-pills-group" role="tablist" aria-label="Workstation Navigation">
+            <a href="./" class="nav-pill-btn active" role="tab" aria-selected="true" tabindex="0">Dashboard</a>
+            <a href="<?php echo htmlspecialchars($pmaStatus['url']); ?>" class="nav-pill-btn" role="tab" aria-selected="false" tabindex="-1">phpMyAdmin</a>
+            <button onclick="openExtensionsModal()" class="nav-pill-btn" role="tab" aria-selected="false" tabindex="-1">
                 PHP Extensions (<?php echo count($loadedExtensions); ?>)
             </button>
-            <button onclick="openSystemModal()" class="nav-pill-btn">System Specs</button>
-            <button onclick="openPhpInfoModal()" class="nav-pill-btn">PHP Info</button>
+            <button onclick="openSystemModal()" class="nav-pill-btn" role="tab" aria-selected="false" tabindex="-1">System Specs</button>
+            <button onclick="openPhpInfoModal()" class="nav-pill-btn" role="tab" aria-selected="false" tabindex="-1">PHP Info</button>
         </nav>
 
         <!-- Right Theme Control -->
